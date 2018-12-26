@@ -75,7 +75,7 @@ public class BallotTransferFlow extends FlowLogic<SignedTransaction> {
 
         VoteContract.Commands.Transfer commandData = new VoteContract.Commands.Transfer();
 
-
+        /* Import issues with SwapIdentitiesFlow
         final HashMap<Party, AnonymousParty> txKeys = subFlow(new SwapIdentitiesFlow(owner));
         if (txKeys.size() != 2) {
             throw new IllegalStateException("Something went wrong when generating confidential identities.");
@@ -88,8 +88,10 @@ public class BallotTransferFlow extends FlowLogic<SignedTransaction> {
         final AnonymousParty anonymousMe = txKeys.get(getOurIdentity());
         final AnonymousParty anonymousLender = txKeys.get(owner);
 
+        */
+
         // New Candidate State
-        VoteState newCandidateState = new VoteState(oldCandidateState.getVote()+1, anonymousLender, anonymousMe);
+        VoteState newCandidateState = new VoteState(oldCandidateState.getVote()+1, owner, issuer );
 
         txBuilder.addInputState(inputVoteStateAndRef);
         txBuilder.addInputState(inputVoteStateAndRef1);

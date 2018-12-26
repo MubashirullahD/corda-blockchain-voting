@@ -58,6 +58,9 @@ public class VoteContract implements Contract {
             if(voteState.getIssuer() == voteState.getOwner())
                 throw new IllegalArgumentException("Cannot issue vote to self.");
 
+            if(voteState.getIssuer().nameOrNull().getOrganisation() != "PartyA")
+                throw new IllegalArgumentException("Issuer must be partyA only.");
+
             // Required Signers constraints
             if(!(requiredSigners.contains(voteState.getIssuer().getOwningKey())))
                 throw new IllegalArgumentException("Issuer must sign the transaction.");
@@ -85,6 +88,9 @@ public class VoteContract implements Contract {
 
             if(voteState.getIssuer() == voteState.getOwner())
                 throw new IllegalArgumentException("Cannot issue vote to self.");
+
+            if(voteState.getIssuer().nameOrNull().getOrganisation() != "PartyA")
+                throw new IllegalArgumentException("Issuer must be partyA only.");
 
             // Required Signer constraints
             if(!(requiredSigners.contains(voteState.getIssuer().getOwningKey())))

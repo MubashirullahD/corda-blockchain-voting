@@ -1,4 +1,4 @@
-
+/**
 package java_bootcamp;
 
 import co.paralleluniverse.fibers.Suspendable;
@@ -108,3 +108,4 @@ public class BallotTransferFlow extends FlowLogic<SignedTransaction> {
 
     }
 }
+*/

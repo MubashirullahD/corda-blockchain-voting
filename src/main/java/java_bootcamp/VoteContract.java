@@ -57,8 +57,8 @@ public class VoteContract implements Contract {
             if(voteState.getIssuer() == voteState.getOwner())
                 throw new IllegalArgumentException("Cannot issue vote to self.");
 
-            if(voteState.getIssuer().nameOrNull().getOrganisation() != "PartyA")
-                throw new IllegalArgumentException("Issuer must be partyA only.");
+            //if(voteState.getIssuer().nameOrNull().getOrganisation() != "PartyA")
+            //    throw new IllegalArgumentException("Issuer must be partyA only.");
 
             // Required Signers constraints
             if(!(requiredSigners.contains(voteState.getIssuer().getOwningKey())))
@@ -88,8 +88,8 @@ public class VoteContract implements Contract {
             if(voteState.getIssuer() == voteState.getOwner())
                 throw new IllegalArgumentException("Cannot issue vote to self.");
 
-            if(voteState.getIssuer().nameOrNull().getOrganisation() != "PartyA")
-                throw new IllegalArgumentException("Issuer must be partyA only.");
+            //if(voteState.getIssuer().nameOrNull().getOrganisation() != "PartyA")
+            //    throw new IllegalArgumentException("Issuer must be partyA only.");
 
             // Required Signer constraints
             if(!(requiredSigners.contains(voteState.getIssuer().getOwningKey())))
@@ -98,6 +98,7 @@ public class VoteContract implements Contract {
         }
         else if(commandType instanceof Commands.Transfer)
         {
+
             // "shape" constraints
             if(tx.getInputStates().size() != 2)
                 throw new IllegalArgumentException("Transfer transaction must have two input states.");

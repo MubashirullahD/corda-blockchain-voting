@@ -31,6 +31,7 @@ public class VoteIssueFlow extends FlowLogic<SignedTransaction> {
         return progressTracker;
     }
 
+    @Override
     @Suspendable
     public SignedTransaction call() throws FlowException {
         // We choose our transaction's notary (the notary prevents double-spends).

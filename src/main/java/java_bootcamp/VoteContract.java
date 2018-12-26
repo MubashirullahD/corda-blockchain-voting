@@ -100,31 +100,40 @@ public class VoteContract implements Contract {
         else if(commandType instanceof Commands.Transfer)
         {
             // "shape" constraints
-            if(tx.getInputStates().size() != 1)
+            if(tx.getInputStates().size() != 2)
                 throw new IllegalArgumentException("Transfer transaction must have two input states.");
 
             if(tx.getOutputStates().size() != 1)
                 throw new IllegalArgumentException("Transfer transaction must have two output states.");
 
             // Content constraints
-            ContractState inputStateOne = tx.getInput(0);
+            ContractState voter     = tx.getInput(0);
+            ContractState candidate = tx.getInput(1);
 
             ContractState outputStateOne = tx.getOutput(0);
 
-            if(!(inputStateOne instanceof VoteState ))
-                throw new IllegalArgumentException("Input states must be VoteState.");
+            if(!(voter instanceof VoteState ))
+                throw new IllegalArgumentException("Input state Voter must be VoteState.");
+
+            if(!(candidate instanceof VoteState))
+                throw new IllegalArgumentException("Input state candidate must be VoteState.");
 
             if(!(outputStateOne instanceof VoteState))
-                throw new IllegalArgumentException("Output states must be VoteState.");
+                throw new IllegalArgumentException("Output state new Candidate must be VoteState.");
 
-            VoteState ballotInput  = (VoteState) inputStateOne;
-            VoteState CandidateOutput = (VoteState) outputStateOne;
+
+            VoteState ballotInput     = (VoteState) voter;
+            VoteState candidateInput  = (VoteState) candidate;
+            VoteState candidateOutput = (VoteState) outputStateOne;
 
 
             if(ballotInput.getVote() != 1)
                 throw new IllegalArgumentException("Invalid number of ballot/s to cast.");
 
-            if(CandidateOutput.getVote() < 0)
+            if(candidateOutput.getVote() != (candidateInput.getVote() + 1))
+                throw new IllegalArgumentException("Number of final votes should be an increment of one.");
+
+            if(candidateOutput.getVote() < 0)
                 throw new IllegalArgumentException("Number of final votes can not be negative.");
 
 

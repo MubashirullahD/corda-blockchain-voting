@@ -1,4 +1,4 @@
-/**
+
 package java_bootcamp;
 
 import co.paralleluniverse.fibers.Suspendable;
@@ -35,6 +35,7 @@ public class BallotTransferFlow extends FlowLogic<SignedTransaction> {
     }
 
 
+    @Override
     @Suspendable
     public SignedTransaction call() throws FlowException {
         // We get a reference to our own identity.
@@ -73,6 +74,8 @@ public class BallotTransferFlow extends FlowLogic<SignedTransaction> {
 
 
         VoteContract.Commands.Transfer commandData = new VoteContract.Commands.Transfer();
+
+
         final HashMap<Party, AnonymousParty> txKeys = subFlow(new SwapIdentitiesFlow(owner));
         if (txKeys.size() != 2) {
             throw new IllegalStateException("Something went wrong when generating confidential identities.");
@@ -89,6 +92,8 @@ public class BallotTransferFlow extends FlowLogic<SignedTransaction> {
         VoteState newCandidateState = new VoteState(oldCandidateState.getVote()+1, anonymousLender, anonymousMe);
 
         txBuilder.addInputState(inputVoteStateAndRef);
+        txBuilder.addInputState(inputVoteStateAndRef1);
+
         txBuilder.addOutputState(newCandidateState, VoteContract.ID );
         List<PublicKey> requiredSigners = ImmutableList.of(inputVoteState.getOwner().getOwningKey());
 
@@ -108,4 +113,3 @@ public class BallotTransferFlow extends FlowLogic<SignedTransaction> {
 
     }
 }
-*/

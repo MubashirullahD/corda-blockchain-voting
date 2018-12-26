@@ -3,6 +3,7 @@ package java_bootcamp;
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.collect.ImmutableList;
 import net.corda.core.flows.*;
+import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.Party;
 import net.corda.core.transactions.SignedTransaction;
 import net.corda.core.transactions.TransactionBuilder;
@@ -11,17 +12,16 @@ import net.corda.core.utilities.ProgressTracker;
 import java.security.PublicKey;
 import java.util.List;
 
-/* Our flow, automating the process of updating the ledger.
- * See src/main/java/examples/ArtTransferFlowInitiator.java for an example. */
 @InitiatingFlow
 @StartableByRPC
-public class TokenIssueFlow extends FlowLogic<SignedTransaction> {
-    private final Party owner;
-    private final int amount;
+public class VoteIssueFlow extends FlowLogic<SignedTransaction> {
+    private final int vote;
+    private final AbstractParty owner;
 
-    public TokenIssueFlow(Party owner, int amount) {
+    public VoteIssueFlow(AbstractParty owner)
+    {
         this.owner = owner;
-        this.amount = amount;
+        this.vote = 0;
     }
 
     private final ProgressTracker progressTracker = new ProgressTracker();
@@ -32,25 +32,25 @@ public class TokenIssueFlow extends FlowLogic<SignedTransaction> {
     }
 
     @Suspendable
-    @Override
     public SignedTransaction call() throws FlowException {
         // We choose our transaction's notary (the notary prevents double-spends).
         Party notary = getServiceHub().getNetworkMapCache().getNotaryIdentities().get(0);
         // We get a reference to our own identity.
-        Party issuer = getOurIdentity();
+        AbstractParty issuer = getOurIdentity();
 
-        // We create our new TokenState.
-        TokenState tokenState = new TokenState(issuer, owner, amount);
+        // We create our new VoteState for the individual voter.
+        VoteState voteState = new VoteState(vote, owner, issuer);
 
         // We build our transaction.
         TransactionBuilder transactionBuilder = new TransactionBuilder();
         transactionBuilder.setNotary(notary);
-        transactionBuilder.addOutputState(tokenState, TokenContract.ID);
+        transactionBuilder.addOutputState(voteState, VoteContract.ID);
 
 
         // We add the Issue command to the transaction.
         // Note that we also specific who is required to sign the transaction.
-        TokenContract.Commands.Issue commandData = new TokenContract.Commands.Issue();
+
+        VoteContract.Commands.IssueVote commandData = new VoteContract.Commands.IssueVote();
         List<PublicKey> requiredSigners = ImmutableList.of(issuer.getOwningKey());
 
         transactionBuilder.addCommand(commandData, requiredSigners);
@@ -63,5 +63,6 @@ public class TokenIssueFlow extends FlowLogic<SignedTransaction> {
 
         // We get the transaction notarised and recorded automatically by the platform.
         return subFlow(new FinalityFlow(signedTransaction));
+
     }
 }

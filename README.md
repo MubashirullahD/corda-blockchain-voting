@@ -2,13 +2,18 @@
   <img src="https://www.corda.net/wp-content/uploads/2016/11/fg005_corda_b.png" alt="Corda" width="500">
 </p>
 
-# Bootcamp CorDapp
+# Voting CorDapp
 
-This project is the template we will use as a basis for developing a complete CorDapp 
-during today's bootcamp. Our CorDapp will allow the issuance of tokens onto the ledger.
+This project uses the bootcamp template to continue to build the BlockChain Voting System. 
+Our CorDapp is intended with four modules:
+* Registration module
+* Issuing Ballots for the voter
+* Transfer of Ballots to the candidates
+* Tallying of results
 
-We'll develop the CorDapp using a test-driven approach. At each stage, you'll know your 
-CorDapp is working once it passes both sets of tests defined in `src/test/java/java_bootcamp`.
+
+Testing for the Token State, Contract and Flow are defined in `src/test/java/java_bootcamp`.
+Other tests should be quite similar to these pre-defined ones.
 
 ## Set up
 
@@ -16,7 +21,7 @@ CorDapp is working once it passes both sets of tests defined in `src/test/java/j
 2. Download and install IntelliJ Community Edition (supported versions 2017.x and 2018.x)
 3. Download the bootcamp-cordapp repository:
 
-       git clone https://github.com/corda/bootcamp-cordapp
+       git clone https://github.com/MubashirullahD/corda-blockchain-voting
        
 4. Open IntelliJ. From the splash screen, click `Import Project`, select the `bootcamp—
 cordapp` folder and click `Open`
@@ -46,14 +51,16 @@ bootcamp:
 * Sample CorDapps (`www.corda.net/samples`)
 * Stack Overflow (`www.stackoverflow.com/questions/tagged/corda`)
 
-## What we'll be building
+## Typical order
 
-Our CorDapp will have three parts:
+The following are examples that have nothing to do with the project.
+The CorDapp usually has three parts for each module.
+Here is a crashcourse for issung Tokens on the ledger:
 
 ### The TokenState
 
 States define shared facts on the ledger. Our state, TokenState, will define a
-token. It will have the following structure:
+token. It has the following structure:
 
     -------------------
     |                 |
@@ -177,3 +184,40 @@ Once you've finished the CorDapp's code, run it with the following steps:
   `distributionUrl=gradle-4.4.1-all.zip`)
 * In `build.gradle`, under both `repositories` blocks, comment out any 
   repositories other than `flatDir { ... }`
+  
+## Relevant to this project
+* VoteState
+* VoteContract
+* BallotIssueFlow
+* VoteIssueFlow
+* BallotTransferFlow
+
+## Explanation
+The voteState has a duel purpose. It is assigned to both the candidates 
+being voted for and the voter.
+
+The voteContract defines three commandTypes, two which are very similar
+except for where the voter is given a value of 1, where as the candidate
+starts off with 0.
+
+The BallotIssueFlow gives the voter their one token to cast with.
+The VoteIssueFlow initializes the candidate with 0 votes.
+The BallotTransferFlow increments the vote of the candidate
+
+The Registration module is planned to create nodes that will be added to
+the build.gradle file. The approach is that the election commission;
+who has access to the registered voters database; will query to get the
+CNIC, city and Fingerprint of each voter and create a node with these 
+values.
+
+Each polling station will be given their own build.gradle file that they
+will use to launch the nodes on the network. The purpose of this approach
+is to elliminate server dependency and have a more robust system.
+
+Additional measures can be taken to make sure no one tampers with the build.gradle
+file by keeping a log of generated hashes with the file.
+
+The paper based voting system is still more secure than this. The trust of officers
+need to be taken into account again for the system to function fairly. There is an 
+instance in this system where if two ballots are issued to a voter, they will cast twice.
+Perhaps a query can be done in the end to figure out transactions from the same nodes.
